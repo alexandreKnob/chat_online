@@ -20,7 +20,7 @@ class _ProdutosEditarState extends State<ProdutosEditar> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DocumentSnapshot dadosProduto;
   String nome = "" ;
-
+  String teste = "";
   TextEditingController campoNome = TextEditingController();
   TextEditingController campoValor = TextEditingController();
 
