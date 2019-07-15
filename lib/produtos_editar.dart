@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProdutosEditar extends StatefulWidget  {
 
-  String produtoID;
+  final String tipoEdicao;
+  final DocumentSnapshot dadosProduto;
 
 
-
-  ProdutosEditar(this.produtoID);
+  ProdutosEditar(this.tipoEdicao,this.dadosProduto);
 
   @override
   _ProdutosEditarState createState() => _ProdutosEditarState();
@@ -25,10 +25,20 @@ class _ProdutosEditarState extends State<ProdutosEditar> {
   TextEditingController campoValor = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.tipoEdicao=="alt"){
+      campoNome.text =   widget.dadosProduto.data["nome"].toString();
+      campoValor.text =   widget.dadosProduto.data["valor"].toString();
+    }
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Inclusão de Produtos"),
+        title: Text(widget.tipoEdicao=="inc" ? "Inclusão de Produtos" : "Alteração de Produtos" ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(left:10,right: 10),
@@ -76,13 +86,22 @@ class _ProdutosEditarState extends State<ProdutosEditar> {
                     child: FlatButton(
                         onPressed: () {
                           if (_formKey.currentState.validate()){
-                            Firestore.instance.collection("produtos").add(
-                                {
-                                  "nome" : campoNome.text,
-                                 "valor" : campoValor.text
-                                }
-                            );
-                            Navigator.pop(context);
+                            if (widget.tipoEdicao=="inc") {
+                              Firestore.instance.collection("produtos").add(
+                                  {
+                                    "nome" : campoNome.text,
+                                    "valor" : campoValor.text
+                                  }
+                              );
+                            } else {
+                              Firestore.instance.collection("produtos").document(widget.dadosProduto.documentID).updateData({
+                                "nome" : campoNome.text,
+                                "valor" : campoValor.text
+                              });
+                              Navigator.pop(context);
+                            }
+
+
                           }
 
                         },

@@ -8,6 +8,8 @@ class Produtos extends StatefulWidget {
 }
 
 class _ProdutosState extends State<Produtos> {
+  DocumentSnapshot branco;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +19,7 @@ class _ProdutosState extends State<Produtos> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutosEditar("")));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutosEditar("inc",branco)));
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.blue,
@@ -50,7 +52,8 @@ class _ProdutosState extends State<Produtos> {
                                         icon: Icon(Icons.edit),
                                         color: Colors.black,
                                         onPressed: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutosEditar(snapshot.data.documents[index].documentID.toString())));
+                                          //Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutosEditar(snapshot.data.documents[index].documentID.toString())));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutosEditar("alt",snapshot.data.documents[index])));
                                         },
                                       ),
                                       IconButton(
