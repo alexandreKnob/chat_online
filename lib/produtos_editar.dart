@@ -89,18 +89,18 @@ class _ProdutosEditarState extends State<ProdutosEditar> {
                             if (widget.tipoEdicao=="inc") {
                               Firestore.instance.collection("produtos").add(
                                   {
-                                    "nome" : campoNome.text,
+                                    "nome" : campoNome.text.toUpperCase(),
                                     "valor" : campoValor.text
                                   }
                               );
                             } else {
                               Firestore.instance.collection("produtos").document(widget.dadosProduto.documentID).updateData({
-                                "nome" : campoNome.text,
+                                "nome" : campoNome.text.toUpperCase(),
                                 "valor" : campoValor.text
                               });
-                              Navigator.pop(context);
-                            }
 
+                            }
+                            Navigator.pop(context);
 
                           }
 

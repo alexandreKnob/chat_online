@@ -10,6 +10,11 @@ class Produtos extends StatefulWidget {
 class _ProdutosState extends State<Produtos> {
   DocumentSnapshot branco;
 
+  TextEditingController busca = TextEditingController();
+  String textoBusca = "";
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +31,54 @@ class _ProdutosState extends State<Produtos> {
       ),
       body: Column(
         children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(10),
+            child: TextField(
+              textCapitalization: TextCapitalization.words,
+              controller: busca,
+              decoration: InputDecoration(
+
+                hintText: "Busca por nome",
+                contentPadding: EdgeInsets.all(5),
+                prefixIcon: IconButton(icon: Icon(Icons.search), onPressed: null),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4),)
+              ),
+
+              onChanged: (texto) {
+                setState(() {
+                  textoBusca = busca.text.toUpperCase();
+
+                });
+              },
+            ),
+          ),
           Expanded(
             child: StreamBuilder(
-                stream: Firestore.instance.collection("produtos").orderBy("nome").snapshots(),
+                stream: Firestore.instance.collection("produtos").orderBy("nome").startAt([textoBusca]).endAt([textoBusca + '\uf8ff']).snapshots(),
+                //stream: Firestore.instance.collection("produtos").orderBy("nome").startAt([busca.text]).endAt([busca.text + '\uf8ff']).snapshots(),
+
+
+                //stream: Firestore.instance.collection("produtos").orderBy("nome").snapshots(),
                 builder: (context, snapshot) {
                   switch(snapshot.connectionState){
                     case ConnectionState.none:
+                    case ConnectionState.done:
                     case ConnectionState.waiting:
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     default:
+
+                      if (snapshot.data.documents.length==0){ //
+                        return Center(
+                          child: Text("Não há dados!",style: TextStyle(color: Colors.redAccent,fontSize: 20),),
+                        );
+                      }
                       return ListView.builder(
+
                           itemCount: snapshot.data.documents.length,
                           itemBuilder: (context, index) {
-                            return Card( // Lista os clientes
+                            return Card( // Lista os produtos
                                 child: ListTile(
                                   //snapshot.data.documents[index].documentID.toString() - pega o ID
                                   title: Text(snapshot.data.documents[index].data["nome"], style: TextStyle(fontSize: 25)),
@@ -82,9 +120,9 @@ class _ProdutosState extends State<Produtos> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Nome : " + snapshot.data.documents[index].data["nome"]),
+          title: Text("Confirmação de Exclusão !"),
           content:
-          Text("Confirma a exclusão do " + snapshot.data.documents[index].data["nome"]),
+          Text("Confirma a exclusão de : \n" + snapshot.data.documents[index].data["nome"].toString().toUpperCase()),
           actions: <Widget>[
             FlatButton(
               child: Text('Cancelar'),
